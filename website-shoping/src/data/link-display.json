@@ -1,0 +1,10 @@
+[
+    {
+        "display": "SIGN IN",
+        "path": "/sign-in"
+    },
+    {
+        "display": "SHOP",
+        "path": "/shop"
+    }
+]
