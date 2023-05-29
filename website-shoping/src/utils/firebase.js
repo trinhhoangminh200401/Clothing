@@ -6,7 +6,7 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
 } from "firebase/auth";
-import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import {  doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyBSm8zlV9GBIvJUtMlHygzzMvfDSq0VJc4",
   authDomain: "clothing-website-36404.firebaseapp.com",
@@ -25,27 +25,25 @@ GoogleProvider.setCustomParameters({
   prompt: "select_account",
 });
 export const auth = getAuth();
-export const signInWithGooglePopup = () =>
-  signInWithPopup(auth, GoogleProvider);
-const db = getFirestore();
-export const createUserDocAuth = async (userauth) => {
-  const userReference = doc(db, "users", userauth.uid);
-  console.log(userReference);
-  const userSnap = await getDoc(userReference);
-  if (!userSnap.exists()) {
-    const { displayName, email } = userauth;
-    const createAt = new Date();
+export const signInWithGooglePopup = () =>signInWithPopup(auth, GoogleProvider);
+const db = getFirestore()
+export const createUserDocAuth = async (userauth)=>{
+      const userReference =  doc(db,"users",userauth.uid)
+      console.log(userReference)
+  const userSnap = await getDoc(userReference)
+  if(!userSnap.exists()){
+    const {displayName,email}=userauth
+    const createAt = new Date()
     try {
-      await setDoc(userReference, {
-        displayName,
-        email,
-        createAt,
-      });
+      await setDoc(userReference,{
+        displayName,email,createAt
+      })
     } catch (error) {
-      console.log("creating user has been fail", error.message);
+      console.log("creating user has been fail",error.message)
+      
     }
   }
   // if user data exist
-  // create/ set the document with data from userauth in collection
+  // create/ set the document with data from userauth in collection 
   // rerturn userRef
-};
+}
