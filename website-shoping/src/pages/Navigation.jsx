@@ -5,7 +5,6 @@ import LinkItems from '../data/link-display.json'
 function Navigation() {
   return (
     <>
-      {" "}
       <div className="navigation">
         <NavBar navitems={LinkItems} />
       </div>
