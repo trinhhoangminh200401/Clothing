@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Homepage";
 import Navigation from "../pages/Navigation";
-import SignIn from "../pages/SignIn";
+import Authentication from "../pages/AuthenPage/Authentication";
 const MyPage = () => {
   return <>xin chao</>;
 };
@@ -11,7 +11,7 @@ function LinksClient() {
       <Route path="/" element={<Navigation />}>
         <Route index element={<Home />} />
         <Route path="shop" element={<MyPage />} />
-        <Route path="sign-in" element={<SignIn/>} />
+        <Route path="auth" element={<Authentication/>} />
       </Route>
     </Routes>
   );

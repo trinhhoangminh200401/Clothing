@@ -1,7 +1,7 @@
 [
     {
         "display": "SIGN IN",
-        "path": "/sign-in"
+        "path": "/auth"
     },
     {
         "display": "SHOP",
