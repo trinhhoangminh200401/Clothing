@@ -1,74 +1,96 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   createEmailandPassword,
   createUserDocAuth,
 } from "../../utils/firebase";
-import './signup.scss'
+import "./signup.scss";
 import FormInput from "../Form";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
 const defaultFormFields = {
   displayName: "",
-  email: "",
+  displayNameError: "",
+  Email: "",
+  EmailError: "",
   password: "",
+  passwordError: "",
   confirmPassword: "",
+  confirmPasswordError: "",
 };
 const SignUp = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
-  const { displayName, email, password, confirmPassword } = formFields;
-  //   console.log(formFields);
+  const { displayName, Email, password, confirmPassword } = formFields;
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  };
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormFields({ ...formFields, [name]: value }); // change value in input
+    console.log( value,)
+    setFormFields({ 
+      ...formFields, 
+      [name]: value,
+      [`${name}Error`]:
+      (name === 'displayName' && value.trim() === '') ? 'Display Name is required' :
+      (name === 'Email' && value.trim() === '') ? 'Email is required' :
+      (name === 'password' && value.trim() === '') ? 'Password is required' :
+      (name === 'confirmPassword' && value.trim() === '') ? 'Confirm Password is required' :
+      (name === 'confirmPassword' && value !== formFields.password) ? 'Passwords do not match' :
+      ''
+     }); // change value in input
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (password !== confirmPassword) return; // return nothing 
+   
     try {
       const { user } = await createEmailandPassword(email, password);
       await createUserDocAuth(user, { displayName });
-      setFormFields(defaultFormFields);
+      resetFormFields();
     } catch (error) {
       console.log("error to create username", error);
     }
   };
   return (
     <div className="sign-up-container">
-   <h2>Don't have any account?</h2>
+      <h2>Don't have any account?</h2>
       <span>Sign up with email and password</span>
       <form onSubmit={handleSubmit}>
         <FormInput
           label="Display Name"
           type="text"
-          required
           onChange={handleChange}
           name="displayName"
           value={displayName}
+          error={formFields.displayNameError}
+          
         />
-         <FormInput
+       
+        <FormInput
           label="Email"
           type="email"
-          required
           onChange={handleChange}
-          name="email"
-          value={email}
+          name="Email"
+          value={Email}
+          error={formFields.EmailError}
         />
         <FormInput
           label="Password"
           type="password"
-          required
           onChange={handleChange}
           name="password"
           value={password}
+          error={formFields.passwordError} 
+
         />
-         <FormInput
+        <FormInput
           label="ConfirmPassword"
           type="password"
-          required
           onChange={handleChange}
           name="confirmPassword"
           value={confirmPassword}
+          error={formFields.confirmPasswordError} 
         />
-        <Button buttonType="createAccount" type="submit">Create account</Button>
+        <Button buttonType={ButtonType.createAccount} type="submit">
+          Create account
+        </Button>
       </form>
     </div>
   );

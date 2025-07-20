@@ -1,15 +1,21 @@
-import './form.scss'
-const FormInput = ({label,...inputProperty}) => {
-  return (
-    <div className="group">
-     <input className="form-input"
-        {...inputProperty}
-      />
-    {label && (
-      <label className={`${inputProperty.value.length ? 'shrink' :''} form-input-label`}>{label}</label>
-    )}
-     
-    </div>
+import{FormInputLabel,Group,Input} from './form-input.styles.jsx'
+const FormInput = ({label,error,...inputProperty}) => {
+    console.log({...inputProperty})
+    return (
+    <Group>
+      <Input {...inputProperty} />
+      {label && (
+        <FormInputLabel shrink={inputProperty.value.length}>
+          {label}
+        </FormInputLabel>
+      )}
+       {error && (
+        <span className="error-message">{error}</span>
+      )}
+    </Group>
   );
 };
 export default FormInput
+// rest params  
+//  + function nhạn param là tham số 
+//   param nó sẽ tách [1,2,3,4]
