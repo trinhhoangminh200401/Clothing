@@ -1,4 +1,11 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect,useReducer, useState } from "react";
+
+const CART_INIT_STATE = {
+   isCartOpen:false,
+   cartItems:[],
+   cartCount:0,
+   cartTotal:0
+}
 
 const addCartItem = (cartItems, productToAdd) => {
   const existCartItem = cartItems.find(
@@ -29,6 +36,23 @@ const removeCartItem = (cartItems, cartItemtoRemove) => {
 const clearCartItem = (cartItems, clearCart) => {
   return cartItems.filter((cartItem) => cartItem.id !== clearCart.id);
 };
+const CART_ACTION = {
+   ADD_TO_CART:'ADD_TO_CART'
+}
+const cartReducer = (state,action)=>{
+  const {type,payload}=action
+  switch(type){
+    case CART_ACTION.ADD_TO_CART:
+      return {
+        ...state,
+        cartItems:addCartItem(state.cartItems,payload)
+      }
+      return 
+     default:
+      throw new Error(`unhandle type of ${type} of cartReducer`)
+  }
+ 
+}
 export const CartContext = createContext({
   isCartOpen: false,
   setIsCartOpen: () => {},
