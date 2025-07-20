@@ -4,7 +4,12 @@
         "path": "/auth"
     },
     {
+        "display":"CONTACT",
+        "path":"Contact"
+    },
+    {
         "display": "SHOP",
         "path": "/shop"
     }
+   
 ]

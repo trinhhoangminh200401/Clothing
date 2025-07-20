@@ -1,14 +1,24 @@
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
+  signOut,
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
-  FacebookAuthProvider,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
 } from "firebase/auth";
-import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc,
+  collection,
+  writeBatch,
+  getDocs,
+  query
+} from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyBSm8zlV9GBIvJUtMlHygzzMvfDSq0VJc4",
   authDomain: "clothing-website-36404.firebaseapp.com",
@@ -22,27 +32,50 @@ const firebaseConfig = {
 
 const firsebaseapp = initializeApp(firebaseConfig);
 const GoogleProvider = new GoogleAuthProvider();
-const FacebookProVider = new FacebookAuthProvider();
 GoogleProvider.setCustomParameters({
   prompt: "select_account",
 });
 export const auth = getAuth();
-
 export const signInWithGooglePopup = () =>
   signInWithPopup(auth, GoogleProvider);
-export const signInGooglewithRedirect = () =>
-  signInWithRedirect(auth, GoogleProvider);
+
 const db = getFirestore();
-// create database in in firestore 
+
+// create database in in firestore
+export const addCollectionAndDocument = async (collectionKey, objecttoAdd) => {
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
+  objecttoAdd.forEach(object => {
+     const docRef = doc(collectionRef, object.title.toLowerCase())
+     batch.set(docRef,object)
+  
+  });
+  await batch.commit();
+  console.log("add to complete")
+
+};
+export const getCollectionCategories = async () =>{
+    const collectionData = collection(db,'categories');
+    const queryCategories = query(collectionData)
+    const getCollectionCategoriesData = await getDocs(queryCategories)
+    const catelist=getCollectionCategoriesData.docs.reduce((acc,docSnap)=>{
+      const{items,title}=docSnap.data()
+      acc[title.toLowerCase()]=items
+       return acc
+
+    },{})
+ return catelist 
+}
+
 /* 
   + createUserDocAuth have two param 
         + userauth : create users collection have name users and get id from that user
         + additionInfor: get more field  when create user name with init equals {}
 
 */
-export const createUserDocAuth = async (userauth,additionalInfor={}) => {
+
+export const createUserDocAuth = async (userauth, additionalInfor = {}) => {
   const userReference = doc(db, "users", userauth.uid);
-  
   const userSnap = await getDoc(userReference);
   if (!userauth) return;
   if (!userSnap.exists()) {
@@ -53,14 +86,12 @@ export const createUserDocAuth = async (userauth,additionalInfor={}) => {
         displayName,
         email,
         createAt,
-        ...additionalInfor
+        ...additionalInfor,
       });
-      // console.log(auth.currentUser);
-      // console.log(displayName)
     } catch (error) {
       console.log("creating user has been failed", error.message);
     }
-   
+
     return userReference;
   }
 
@@ -82,8 +113,18 @@ export const createEmailandPassword = async (email, password) => {
   }
 };
 export const signInEmailandPassword = async (email, password) => {
-  
-    if (!email || !password) return;
-    return await signInWithEmailAndPassword(auth, email, password);
-  
+  if (!email || !password) return;
+  const { user } = await signInWithEmailAndPassword(auth, email, password);
+  if (user) {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      const displayName = userSnap.data().displayName;
+      return { user, displayName };
+    }
+  }
 };
+export const SignOut = async () => signOut(auth);
+export const onAuthchangedListener = (callback) =>
+  onAuthStateChanged(auth, callback);
