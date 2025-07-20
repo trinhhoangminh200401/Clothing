@@ -1,0 +1,4 @@
+[build]
+  base = "website-shoping"
+  command = "yarn build"
+  publish = "dist"
