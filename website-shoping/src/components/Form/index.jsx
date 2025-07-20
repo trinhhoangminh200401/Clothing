@@ -1,6 +1,6 @@
 import{FormInputLabel,Group,Input} from './form-input.styles.jsx'
 const FormInput = ({label,error,...inputProperty}) => {
-    console.log({...inputProperty})
+    // console.log({...inputProperty})
     return (
     <Group>
       <Input {...inputProperty} />
